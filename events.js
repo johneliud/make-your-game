@@ -3,12 +3,18 @@ import { GetTile } from "./pacman.js";
 export function Move(direction, maze, pacman) {
     if (maze[pacman.y][pacman.x] === 'O') {
         if (pacman.x === 0) {
-            pacman.x = maze[pacman.y].length -1
-        } else {
+            if (direction === 'left') {
+                pacman.x = maze[pacman.y].length -1
+                updatePacmanPosition(pacman);
+                return
+            }
+        } else if(direction === 'right') {
+            console.log('true')
             pacman.x = 0
+            updatePacmanPosition(pacman);
+            return
         }
-        updatePacmanPosition(pacman);
-        return
+
     }
 
     const moves = {
