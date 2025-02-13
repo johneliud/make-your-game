@@ -54,3 +54,4 @@ function createMaze() {
     });
   });
 }
+document.addEventListener('DOMContentLoaded', createMaze);
