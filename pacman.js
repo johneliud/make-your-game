@@ -1,6 +1,9 @@
-class Pacman {
+import { Move } from './events.js';
+import { Maze } from './script.js';
+
+export class Pacman {
   constructor() {
-    // Starting position near the center of the maze
+    // Starting position near the center of the Maze
     this.x = 11;
     this.y = 13;
     
@@ -30,3 +33,24 @@ function getTile(x, y) {
   }
   return null;
 }
+
+const pacman = new Pacman();
+
+document.addEventListener('keydown', (event) => {
+  switch (event.key) {
+    case 'ArrowUp':
+      Move('up', Maze, pacman);
+      break;
+    case 'ArrowDown':
+      Move('down', Maze, pacman);
+      break;
+    case 'ArrowLeft':
+      Move('left', Maze, pacman);
+      break;
+    case 'ArrowRight':
+      Move('right', Maze, pacman);
+      break;
+    default:
+      console.log('Invalid key');
+  }
+});
