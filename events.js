@@ -1,6 +1,16 @@
 import { GetTile } from "./pacman.js";
 
 export function Move(direction, maze, pacman) {
+    if (maze[pacman.y][pacman.x] === 'O') {
+        if (pacman.x === 0) {
+            pacman.x = maze[pacman.y].length -1
+        } else {
+            pacman.x = 0
+        }
+        updatePacmanPosition(pacman);
+        return
+    }
+
     const moves = {
         up: [-1, 0],
         down: [1, 0],
@@ -18,16 +28,6 @@ export function Move(direction, maze, pacman) {
     }
 
     const tile = maze[moveRow][moveCol]
-
-    if (tile === 'O') {
-        if (moveCol === 0) {
-            pacman.x = maze[pacman.y].length -1
-        } else {
-            pacman.x = 0
-        }
-        updatePacmanPosition(pacman);
-        return
-    }
 
     if (tile === 'W' || tile === 'G' || (direction === 'down' && maze[moveRow][moveCol] === 'T')) {
         console.log(`Cannot move ${direction}, invalid tile.`);
