@@ -47,8 +47,12 @@ body {
 }
 
 .pacman {
+  width: 15px;
+  height: 15px;
   background-color: yellow;
   border-radius: 50%;
+  position: absolute;
+  z-index: 10;
 }
 
 .ghost {
