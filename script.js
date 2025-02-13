@@ -44,7 +44,7 @@ maze.forEach((row) => {
 function createMaze() {
   const grid = document.querySelector('.grid');
 
-  // Clear previous grid before creating a new.
+  // Clear previous grid before creating a new
   grid.innerHTML = '';
   maze.forEach((row) => {
     row.split('').forEach((cell) => {
@@ -54,4 +54,9 @@ function createMaze() {
     });
   });
 }
-document.addEventListener('DOMContentLoaded', createMaze);
+
+document.addEventListener('DOMContentLoaded', () => {
+  createMaze();
+  window.pacman = new Pacman();
+  console.log('Pacman created at:', pacman.x, pacman.y);
+});
