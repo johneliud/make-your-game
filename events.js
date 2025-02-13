@@ -17,7 +17,19 @@ export function Move(direction, maze, pacman) {
         return;
     }
 
-    if (maze[moveRow][moveCol] === 'W' || maze[moveRow][moveCol] === 'G' || (direction === 'down' && maze[moveRow][moveCol] === 'T')) {
+    const tile = maze[moveRow][moveCol]
+
+    if (tile === 'O') {
+        if (moveCol === 0) {
+            pacman.x = maze[pacman.y].length -1
+        } else {
+            pacman.x = 0
+        }
+        updatePacmanPosition(pacman);
+        return
+    }
+
+    if (tile === 'W' || tile === 'G' || (direction === 'down' && maze[moveRow][moveCol] === 'T')) {
         console.log(`Cannot move ${direction}, invalid tile.`);
         return;
     }
