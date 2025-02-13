@@ -6,32 +6,30 @@ export function Move(direction, maze, pacman) {
         right: [0, 1]
     };
     
-    const [dx, dy] = moves[direction];
-    const newX = pacman.x + dx;
-    const newY = pacman.y + dy;
+    const [row, col] = moves[direction];
+    const moveRow = pacman.y + row;
+    const moveCol = pacman.x + col;
 
-    console.log(maze[pacman])
+    console.log(`Moving ${direction} from (${pacman.x}, ${pacman.y}) to (${moveCol}, ${moveRow}) got  ${maze[moveRow][moveCol]}`);
 
-    //console.log(`Moving ${direction} from (${pacman.x}, ${pacman.y}) to (${newX}, ${newY})`);
-
-    if (maze[newX][newY] === 'W') {
+    if (maze[moveRow][moveCol] === 'W') {
         console.log(`Cannot move ${direction}, there is a wall.`);
         return;
     }
 
-    if (maze[newX][newY] === 'G') {
+    if (maze[moveRow][moveCol] === 'G') {
         console.log(`Cannot move ${direction}, there is a ghost pen.`);
         return;
     }
 
-    if (direction === 'down' && maze[newX][newY] === 'T') {
+    if (direction === 'down' && maze[moveRow][moveCol] === 'T') {
         console.log(`Cannot move down, there is a ghost gate.`);
         return;
     }
     
     // Update the existing Pacman position
-    pacman.x = newX;
-    pacman.y = newY;
+    pacman.x = moveCol;
+    pacman.y = moveRow;
 
     // Move the Pacman element in the grid
     updatePacmanPosition(pacman);
