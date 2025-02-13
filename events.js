@@ -1,3 +1,5 @@
+import { GetTile } from "./pacman.js";
+
 export function Move(direction, maze, pacman) {
     const moves = {
         up: [-1, 0],
@@ -9,6 +11,12 @@ export function Move(direction, maze, pacman) {
     const [row, col] = moves[direction];
     const moveRow = pacman.y + row;
     const moveCol = pacman.x + col;
+
+    // Prevent out-of-bounds errors
+    if (moveRow < 0 || moveRow >= maze.length || moveCol < 0 || moveCol >= maze[0].length) {
+        console.log(`Cannot move ${direction}, out of bounds.`);
+        return;
+    }
 
     console.log(`Moving ${direction} from (${pacman.x}, ${pacman.y}) to (${moveCol}, ${moveRow}) got  ${maze[moveRow][moveCol]}`);
 
@@ -27,17 +35,17 @@ export function Move(direction, maze, pacman) {
         return;
     }
     
-    // Update the existing Pacman position
+    // Update Pacman's position
     pacman.x = moveCol;
     pacman.y = moveRow;
 
-    // Move the Pacman element in the grid
+    // Move Pacman element in the grid
     updatePacmanPosition(pacman);
 }
 
 // Function to update Pacman's position in the grid
 function updatePacmanPosition(pacman) {
-    const newTile = getTile(pacman.x, pacman.y);
+    const newTile = GetTile(pacman.x, pacman.y);
     if (newTile) {
         newTile.appendChild(pacman.element);
     }
