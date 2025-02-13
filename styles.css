@@ -1,0 +1,70 @@
+    :root {
+      --wall-color: blue;
+      --path-color: black;
+      --dot-color: white;
+      --ghost-pen-color: darkred;
+      --gate-color: white;
+      --warp-color: black;
+      --tile-size: 15px;
+      --dot-size: 4px;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: var(--path-color);
+      margin: 0;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(23, var(--tile-size));
+      grid-template-rows: repeat(23, var(--tile-size));
+      gap: 2px;
+      background-color: var(--path-color);
+    }
+
+    .tile {
+      width: var(--tile-size);
+      height: var(--tile-size);
+    }
+
+    /* Walls */
+    .wall {
+      background-color: var(--wall-color);
+    }
+
+    /* Paths with dots */
+    .path {
+      background-color: var(--path-color);
+      position: relative;
+    }
+
+    .path::after {
+      content: "";
+      width: var(--dot-size);
+      height: var(--dot-size);
+      background-color: var(--dot-color);
+      border-radius: 50%;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    /* Ghost pen area */
+    .ghost-pen {
+      background-color: var(--ghost-pen-color);
+    }
+
+    /* Ghost pen gate */
+    .gate {
+      background-color: var(--gate-color);
+    }
+
+    /* Warp tunnels */
+    .warp {
+      background-color: var(--warp-color);
+    }
