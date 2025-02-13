@@ -7,46 +7,48 @@ export function Move(direction, maze, pacman) {
         left: [0, -1],
         right: [0, 1]
     };
-    
+
     const [row, col] = moves[direction];
     const moveRow = pacman.y + row;
     const moveCol = pacman.x + col;
 
-    // Prevent out-of-bounds errors
     if (moveRow < 0 || moveRow >= maze.length || moveCol < 0 || moveCol >= maze[0].length) {
         console.log(`Cannot move ${direction}, out of bounds.`);
         return;
     }
 
-    console.log(`Moving ${direction} from (${pacman.x}, ${pacman.y}) to (${moveCol}, ${moveRow}) got  ${maze[moveRow][moveCol]}`);
-
-    if (maze[moveRow][moveCol] === 'W') {
-        console.log(`Cannot move ${direction}, there is a wall.`);
+    if (maze[moveRow][moveCol] === 'W' || maze[moveRow][moveCol] === 'G' || (direction === 'down' && maze[moveRow][moveCol] === 'T')) {
+        console.log(`Cannot move ${direction}, invalid tile.`);
         return;
     }
 
-    if (maze[moveRow][moveCol] === 'G') {
-        console.log(`Cannot move ${direction}, there is a ghost pen.`);
-        return;
-    }
+    // Store previous position
+    pacman.prevX = pacman.x;
+    pacman.prevY = pacman.y;
 
-    if (direction === 'down' && maze[moveRow][moveCol] === 'T') {
-        console.log(`Cannot move down, there is a ghost gate.`);
-        return;
-    }
-    
     // Update Pacman's position
     pacman.x = moveCol;
     pacman.y = moveRow;
 
-    // Move Pacman element in the grid
+    // Move Pacman in the grid
     updatePacmanPosition(pacman);
 }
 
-// Function to update Pacman's position in the grid
 function updatePacmanPosition(pacman) {
+    // Find the previous tile Pacman was on
+    const oldTile = GetTile(pacman.prevX, pacman.prevY);
+    if (oldTile) {
+        oldTile.innerHTML = ''; // Clear previous Pacman from the old tile
+    }
+
+    // Find the new tile and move Pacman there
     const newTile = GetTile(pacman.x, pacman.y);
     if (newTile) {
         newTile.appendChild(pacman.element);
     }
+
+    // Update previous position
+    pacman.prevX = pacman.x;
+    pacman.prevY = pacman.y;
 }
+
