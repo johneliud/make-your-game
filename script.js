@@ -1,4 +1,8 @@
-const maze = [
+import { createGhosts } from './ghost.js';
+import { createMaze } from './create_maze.js';
+import { Pacman } from './pacman.js';
+
+export const maze = [
   'WWWWWWWWWWWWWWWWWWWWWWW',
   'WPPPWPPPPPPPPPPPPPWPPPW',
   'WPWPWPWWWWWPWWWWWPWPWPW',
@@ -24,7 +28,7 @@ const maze = [
   'WWWWWWWWWWWWWWWWWWWWWWW',
 ];
 
-const tileClasses = {
+export const tileClasses = {
   W: 'wall',
   P: 'path',
   G: 'ghost-pen',
@@ -32,31 +36,8 @@ const tileClasses = {
   O: 'warp',
 };
 
-const grid = document.querySelector('.grid');
-maze.forEach((row) => {
-  row.split('').forEach((cell) => {
-    const div = document.createElement('div');
-    div.classList.add('tile', tileClasses[cell]);
-    grid.appendChild(div);
-  });
-});
-
-function createMaze() {
-  const grid = document.querySelector('.grid');
-
-  // Clear previous grid before creating a new
-  grid.innerHTML = '';
-  maze.forEach((row) => {
-    row.split('').forEach((cell) => {
-      const div = document.createElement('div');
-      div.classList.add('tile', tileClasses[cell]);
-      grid.appendChild(div);
-    });
-  });
-}
-
 document.addEventListener('DOMContentLoaded', () => {
   createMaze();
   window.pacman = new Pacman();
-  console.log('Pacman created at:', pacman.x, pacman.y);
+  window.ghosts = createGhosts();
 });
