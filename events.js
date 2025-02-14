@@ -1,11 +1,22 @@
 import { GetTile } from './pacman.js';
 import { pacmanMunchSound, intermissionSound } from './sound.js';
 import { checkWinCondition } from './win.js';
+import { BufferDir } from './pacman.js';  
+import { Maze } from './script.js';
+
+const moves = {
+  up: [-1, 0],
+  down: [1, 0],
+  left: [0, -1],
+  right: [0, 1],
+};
 
 let lastDirection = null; // Store the last valid direction
 let autoMoveInterval = null; // Store the interval for auto-moving
+export let IsInMotion = false;
+export let IsMoved = false;
 
-export function Move(direction, maze, pacman) {
+export function Move(direction, pacman) {
   // Store the last valid direction
   lastDirection = direction;
 
@@ -17,16 +28,17 @@ export function Move(direction, maze, pacman) {
   // Start auto-moving Pac-Man in the last valid direction
   autoMoveInterval = setInterval(() => {
     if (lastDirection) {
-      performMove(lastDirection, maze, pacman);
+      performMove(lastDirection, pacman);
     }
   }, 200); // Adjust the interval for smoother movement
 }
 
-function performMove(direction, maze, pacman) {
-  if (maze[pacman.y][pacman.x] === 'O') {
+
+function performMove(direction, pacman) {
+  if (Maze[pacman.y][pacman.x] === 'O') {
     if (pacman.x === 0) {
       if (direction === 'left') {
-        pacman.x = maze[pacman.y].length - 1;
+        pacman.x = Maze[pacman.y].length - 1;
         updatePacmanPosition(pacman);
         return;
       }
@@ -37,36 +49,13 @@ function performMove(direction, maze, pacman) {
     }
   }
 
-  const moves = {
-    up: [-1, 0],
-    down: [1, 0],
-    left: [0, -1],
-    right: [0, 1],
-  };
-
   const [row, col] = moves[direction];
   const moveRow = pacman.y + row;
   const moveCol = pacman.x + col;
+  const tile = Maze[moveRow][moveCol];
 
-  if (
-    moveRow < 0 ||
-    moveRow >= maze.length ||
-    moveCol < 0 ||
-    moveCol >= maze[0].length
-  ) {
-    console.log(`Cannot move ${direction}, out of bounds.`);
-    return;
-  }
-
-  const tile = maze[moveRow][moveCol];
-
-  if (
-    tile === 'W' ||
-    tile === 'G' ||
-    (direction === 'down' && maze[moveRow][moveCol] === 'T')
-  ) {
-    console.log(`Cannot move ${direction}, invalid tile.`);
-    return;
+  if (!validateMove(tile, direction, moveRow, moveCol)) {
+    return
   }
 
   // Store previous position
@@ -78,15 +67,15 @@ function performMove(direction, maze, pacman) {
   pacman.y = moveRow;
 
   // Check if Pacman is on a pellet (P)
-  if (maze[pacman.y][pacman.x] === 'P') {
+  if (Maze[pacman.y][pacman.x] === 'P') {
     // Play munch sound
     pacmanMunchSound.play();
 
-    // Remove the pellet from the maze
-    maze[pacman.y] =
-      maze[pacman.y].substring(0, pacman.x) +
+    // Remove the pellet from the Maze
+    Maze[pacman.y] =
+      Maze[pacman.y].substring(0, pacman.x) +
       ' ' +
-      maze[pacman.y].substring(pacman.x + 1);
+      Maze[pacman.y].substring(pacman.x + 1);
 
     // Update the score
     pacman.score += 10;
@@ -100,7 +89,7 @@ function performMove(direction, maze, pacman) {
     }
 
     // Check for win condition
-    if (checkWinCondition(maze)) {
+    if (checkWinCondition()) {
       intermissionSound.play();
       document.getElementById('message').textContent = 'You Win!';
       clearInterval(autoMoveInterval); // Stop auto-moving when the game is won
@@ -108,10 +97,12 @@ function performMove(direction, maze, pacman) {
   }
 
   // Move Pacman in the grid
+  IsMoved = true;
   updatePacmanPosition(pacman);
 }
 
 function updatePacmanPosition(pacman) {
+  IsInMotion = true;
   // Find the previous tile Pacman was on
   const oldTile = GetTile(pacman.prevX, pacman.prevY);
   if (oldTile) {
@@ -127,4 +118,28 @@ function updatePacmanPosition(pacman) {
   // Update previous position
   pacman.prevX = pacman.x;
   pacman.prevY = pacman.y;
+}
+
+
+function validateMove(tile, direction, moveRow, moveCol) {
+  if (
+    moveRow < 0 ||
+    moveRow >= Maze.length ||
+    moveCol < 0 ||
+    moveCol >= Maze[0].length
+  ) {
+    console.log(`Cannot move ${direction}, out of bounds.`);
+    return false;
+  }
+
+  if (
+    tile === 'W' ||
+    tile === 'G' ||
+    (direction === 'down' && Maze[moveRow][moveCol] === 'T')
+  ) {
+    console.log(`Cannot move ${direction}, invalid tile.`);
+    return false;
+  }
+
+  return true;
 }
