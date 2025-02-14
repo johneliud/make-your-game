@@ -56,10 +56,27 @@ body {
 }
 
 .ghost {
-  width: 100%;
-  height: 100%;
-  background: red;
-  border-radius: 50%;
+  width: 15px;
+  height: 15px;
+  border-radius: 50% 50% 0 0;
+  position: absolute;
+  z-index: 10;
+}
+
+.ghost.red {
+  background-color: red;
+}
+
+.ghost.pink {
+  background-color: pink;
+}
+
+.ghost.cyan {
+  background-color: cyan;
+}
+
+.ghost.orange {
+  background-color: orange;
 }
 
 .frightened {
