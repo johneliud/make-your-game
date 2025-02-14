@@ -1,4 +1,5 @@
 import { GetTile } from './pacman.js';
+import { pacmanMunchSound } from './sound.js';
 
 export function Move(direction, maze, pacman) {
   if (maze[pacman.y][pacman.x] === 'O') {
@@ -77,6 +78,7 @@ export function Move(direction, maze, pacman) {
 
   // Move Pacman in the grid
   updatePacmanPosition(pacman);
+  pacmanMunchSound.play()
 }
 
 function updatePacmanPosition(pacman) {
