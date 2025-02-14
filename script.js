@@ -71,4 +71,9 @@ document.addEventListener('DOMContentLoaded', () => {
   createMaze();
   window.pacman = new Pacman();
   window.ghosts = createGhosts();
+
+  // Move ghosts at regular intervals
+  setInterval(() => {
+    window.ghosts.forEach((ghost) => ghost.move());
+  }, 200);
 });
