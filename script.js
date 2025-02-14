@@ -1,4 +1,6 @@
-const maze = [
+import { Pacman } from './pacman.js';
+
+export const Maze = [
   'WWWWWWWWWWWWWWWWWWWWWWW',
   'WPPPWPPPPPPPPPPPPPWPPPW',
   'WPWPWPWWWWWPWWWWWPWPWPW',
@@ -33,7 +35,7 @@ const tileClasses = {
 };
 
 const grid = document.querySelector('.grid');
-maze.forEach((row) => {
+Maze.forEach((row) => {
   row.split('').forEach((cell) => {
     const div = document.createElement('div');
     div.classList.add('tile', tileClasses[cell]);
@@ -46,7 +48,7 @@ function createMaze() {
 
   // Clear previous grid before creating a new
   grid.innerHTML = '';
-  maze.forEach((row) => {
+  Maze.forEach((row) => {
     row.split('').forEach((cell) => {
       const div = document.createElement('div');
       div.classList.add('tile', tileClasses[cell]);
@@ -57,6 +59,7 @@ function createMaze() {
 
 document.addEventListener('DOMContentLoaded', () => {
   createMaze();
-  window.pacman = new Pacman();
+  window.Pacman = new Pacman();
+  const pacman = new Pacman();
   console.log('Pacman created at:', pacman.x, pacman.y);
 });
