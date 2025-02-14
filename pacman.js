@@ -1,5 +1,9 @@
 import { Move } from './events.js';
 import { Maze } from './script.js';
+import { IsInMotion } from './events.js';
+import { IsMoved } from './events.js';
+
+export let BufferDir = '';
 
 export class Pacman {
   constructor() {
@@ -37,20 +41,29 @@ export function GetTile(x, y) {
 const pacman = new Pacman();
 
 document.addEventListener('keydown', (event) => {
+  let dir = '';
+
   switch (event.key) {
     case 'ArrowUp':
-      Move('up', Maze, pacman);
+      dir = 'up';
       break;
     case 'ArrowDown':
-      Move('down', Maze, pacman);
+      dir = 'down';
       break;
     case 'ArrowLeft':
-      Move('left', Maze, pacman);
+      dir = 'left';
       break;
     case 'ArrowRight':
-      Move('right', Maze, pacman);
+      dir = 'right';
       break;
     default:
       console.log('Invalid key');
   }
+
+  if (IsInMotion && !IsMoved) {
+    BufferDir = dir;
+  } else {
+    Move(dir, pacman);
+  }
+  
 });
