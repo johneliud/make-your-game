@@ -1,5 +1,14 @@
 import { Pacman } from './pacman.js';
 
+/*
+Defines the grid layout:
+  W - Wall
+  P - Path
+  G - Ghost pen
+  T - Gate
+  0 - Tunnel
+ */
+
 export const Maze = [
   'WWWWWWWWWWWWWWWWWWWWWWW',
   'WPPPWPPPPPPPPPPPPPWPPPW',
