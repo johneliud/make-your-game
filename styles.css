@@ -116,3 +116,7 @@ body {
 .warp {
   background-color: var(--warp-color);
 }
+
+.empty {
+  background-color: var(--path-color); 
+}
