@@ -7,6 +7,5 @@ export function checkWinCondition(maze) {
       return false; // Pellets still exist
     }
   }
-  intermissionSound.play();
   return true; // All pellets are collected
 }
