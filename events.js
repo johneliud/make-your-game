@@ -1,7 +1,28 @@
 import { GetTile } from './pacman.js';
-import { pacmanMunchSound } from './sound.js';
+import { pacmanMunchSound, intermissionSound } from './sound.js';
+import { checkWinCondition } from './win.js';
+
+let lastDirection = null; // Store the last valid direction
+let autoMoveInterval = null; // Store the interval for auto-moving
 
 export function Move(direction, maze, pacman) {
+  // Store the last valid direction
+  lastDirection = direction;
+
+  // Clear any existing auto-move interval
+  if (autoMoveInterval) {
+    clearInterval(autoMoveInterval);
+  }
+
+  // Start auto-moving Pac-Man in the last valid direction
+  autoMoveInterval = setInterval(() => {
+    if (lastDirection) {
+      performMove(lastDirection, maze, pacman);
+    }
+  }, 200); // Adjust the interval for smoother movement
+}
+
+function performMove(direction, maze, pacman) {
   if (maze[pacman.y][pacman.x] === 'O') {
     if (pacman.x === 0) {
       if (direction === 'left') {
@@ -58,6 +79,9 @@ export function Move(direction, maze, pacman) {
 
   // Check if Pacman is on a pellet (P)
   if (maze[pacman.y][pacman.x] === 'P') {
+    // Play munch sound
+    pacmanMunchSound.play();
+
     // Remove the pellet from the maze
     maze[pacman.y] =
       maze[pacman.y].substring(0, pacman.x) +
@@ -74,11 +98,17 @@ export function Move(direction, maze, pacman) {
       currentTile.classList.remove('path');
       currentTile.classList.add('empty');
     }
+
+    // Check for win condition
+    if (checkWinCondition(maze)) {
+      intermissionSound.play();
+      document.getElementById('message').textContent = 'You Win!';
+      clearInterval(autoMoveInterval); // Stop auto-moving when the game is won
+    }
   }
 
   // Move Pacman in the grid
   updatePacmanPosition(pacman);
-  pacmanMunchSound.play()
 }
 
 function updatePacmanPosition(pacman) {
