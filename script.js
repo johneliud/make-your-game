@@ -1,3 +1,4 @@
+import { createGhosts } from './ghosts.js';
 import { Pacman } from './pacman.js';
 
 /*
@@ -68,7 +69,6 @@ function createMaze() {
 
 document.addEventListener('DOMContentLoaded', () => {
   createMaze();
-  window.Pacman = new Pacman();
-  const pacman = new Pacman();
-  console.log('Pacman created at:', pacman.x, pacman.y);
+  window.pacman = new Pacman();
+  window.ghosts = createGhosts();
 });
