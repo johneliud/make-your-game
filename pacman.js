@@ -64,6 +64,7 @@ document.addEventListener('keydown', (event) => {
     BufferDir = dir;
   } else {
     Move(dir, pacman);
+    BufferDir =  ''
   }
   
 });
