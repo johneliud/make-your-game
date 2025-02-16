@@ -16,37 +16,22 @@ let autoMoveInterval = null; // Store the interval for auto-moving
 export let IsInMotion = false;
 export let IsMoved = false;
 
-export function Move(direction, pacman) {
-  // Store the last valid direction
-  lastDirection = direction;
-
-  // Clear any existing auto-move interval
+export function Move(direction) {
   if (autoMoveInterval) {
     clearInterval(autoMoveInterval);
   }
 
   // Start auto-moving Pac-Man in the last valid direction
   autoMoveInterval = setInterval(() => {
-    if (lastDirection) {
-      performMove(lastDirection, pacman);
+    if (direction) {
+      performMove(direction, pacman);
     }
   }, 200); // Adjust the interval for smoother movement
 }
 
-
-function performMove(direction, pacman) {
-  if (Maze[pacman.y][pacman.x] === 'O') {
-    if (pacman.x === 0) {
-      if (direction === 'left') {
-        pacman.x = Maze[pacman.y].length - 1;
-        updatePacmanPosition(pacman);
-        return;
-      }
-    } else if (direction === 'right') {
-      pacman.x = 0;
-      updatePacmanPosition(pacman);
-      return;
-    }
+function performMove(direction) {
+  if (turnnelMove(pacman, direction)) {
+    return
   }
 
   const [row, col] = moves[direction];
@@ -142,4 +127,22 @@ function validateMove(tile, direction, moveRow, moveCol) {
   }
 
   return true;
+}
+
+function turnnelMove(pacman, direction) {
+  if (Maze[pacman.y][pacman.x] === 'O') {
+    if (pacman.x === 0) {
+      if (direction === 'left') {
+        pacman.x = Maze[pacman.y].length - 1;
+        updatePacmanPosition(pacman);
+        return true;
+      }
+    } else if (direction === 'right') {
+      pacman.x = 0;
+      updatePacmanPosition(pacman);
+      return true;
+    }
+  }
+
+  return false
 }
