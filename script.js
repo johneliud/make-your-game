@@ -1,5 +1,7 @@
 import { Pacman } from './pacman.js';
 import { createGhosts } from './ghosts.js';
+import { startGameLoop } from './game_loop.js';
+import { initializePauseMenu } from './pause_handler.js';
 
 export const maze = [
   'WWWWWWWWWWWWWWWWWWWWWWW',
@@ -52,4 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setInterval(() => {
     window.ghosts.forEach((ghost) => ghost.move());
   }, 500);
+
+  startGameLoop();
+  initializePauseMenu();
 });

@@ -162,7 +162,7 @@ function handlePacmanDeath(pacman) {
   pacman.lives--;
   document.getElementById('lives').textContent = pacman.lives;
 
-  if (pacman.lives < 1) {
+  if (pacman.lives <= 0) {
     document.getElementById('message').textContent = 'Game Over!';
     clearInterval(autoMoveInterval);
     return;
