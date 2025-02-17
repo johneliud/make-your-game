@@ -1,70 +1,63 @@
 import { Move } from './events.js';
-import { Maze } from './script.js';
 import { IsInMotion } from './events.js';
-import { IsMoved } from './events.js';
 
 export let BufferDir = '';
+const GRID_WIDTH = 23;
 
 export class Pacman {
   constructor() {
-    // Starting position near the center of the Maze
     this.x = 11;
     this.y = 13;
-    
+    this.prevX = 11;
+    this.prevY = 13;
     this.score = 0;
     this.lives = 3;
+    this.element = this.createPacmanElement();
+  }
 
-    // Create pacman element
-    this.element = document.createElement('div');
-    this.element.classList.add('pacman');
-
-    // Append pacman to the correct tile
+  createPacmanElement() {
+    const element = document.createElement('div');
+    element.classList.add('pacman');
     const tile = GetTile(this.x, this.y);
     if (tile) {
-      tile.appendChild(this.element);
-      console.log('Pacman appended to tile:', tile);
+      tile.appendChild(element);
     } else {
-      console.error('Tile not found for Pacman');
+      console.error('Starting tile not found for Pacman');
     }
+    return element;
   }
 }
 
-// Function to get the correct tile in the grid
 export function GetTile(x, y) {
   const grid = document.querySelector('.grid');
-  if (grid && grid.children) {
-    return grid.children[y * 23 + x];
+  if (grid?.children) {
+    return grid.children[y * GRID_WIDTH + x];
   }
   return null;
 }
 
-const pacman = new Pacman();
+export const pacman = new Pacman();
 
+// Handle keyboard input
 document.addEventListener('keydown', (event) => {
-  let dir = '';
+  const keyMap = {
+    ArrowUp: 'up',
+    ArrowDown: 'down',
+    ArrowLeft: 'left',
+    ArrowRight: 'right'
+  };
+  
+  const dir = keyMap[event.key];
+  if (!dir) return;
 
-  switch (event.key) {
-    case 'ArrowUp':
-      dir = 'up';
-      break;
-    case 'ArrowDown':
-      dir = 'down';
-      break;
-    case 'ArrowLeft':
-      dir = 'left';
-      break;
-    case 'ArrowRight':
-      dir = 'right';
-      break;
-    default:
-      console.log('Invalid key');
-  }
-
-  if (IsInMotion && !IsMoved) {
+  if (IsInMotion && BufferDir === '') {
     BufferDir = dir;
   } else {
-    Move(dir, pacman);
-    BufferDir =  ''
+    Move(dir);
   }
-  
 });
+
+export function clearBuffer() {
+  BufferDir = ''
+  return BufferDir
+}
