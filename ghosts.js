@@ -9,11 +9,9 @@ export class Ghost {
     this.isInPen = true;
     this.frightenedMode = false;
 
-    // Create ghost element
     this.element = document.createElement('div');
     this.element.classList.add('ghost', this.color);
 
-    // Append ghost to tiles
     const tile = getTile(this.x, this.y);
     if (tile) {
       tile.appendChild(this.element);
@@ -29,7 +27,7 @@ export class Ghost {
     ];
 
     // Filter out invalid moves
-    const validMoves = directions.filter((dir) => {
+    let validMoves = directions.filter((dir) => {
       const newX = this.x + dir.x;
       const newY = this.y + dir.y;
 
@@ -51,6 +49,18 @@ export class Ghost {
       }
     });
 
+    // Prioritize moving away from pacman when frightened
+    if (this.frightenedMode && !this.isInPen) {
+      const pacman = window.pacman;
+      validMoves.sort((a, b) => {
+        const distA =
+          Math.abs(this.x + a.x - pacman.x) + Math.abs(this.y + a.y - pacman.y);
+        const distB =
+          Math.abs(this.x + b.x - pacman.x) + Math.abs(this.y + b.y - pacman.y);
+        return distB - distA; // Sort in descending order to prefer moves that increase distance
+      });
+    }
+
     if (validMoves.length > 0) {
       const move = validMoves[Math.floor(Math.random() * validMoves.length)];
       this.x += move.x;
@@ -61,6 +71,14 @@ export class Ghost {
       }
 
       this.updatePosition();
+    }
+  }
+
+  updateAppearance() {
+    if (this.frightenedMode) {
+      this.element.classList.add('frightened');
+    } else {
+      this.element.classList.remove('frightened');
     }
   }
 
