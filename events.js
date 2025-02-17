@@ -11,7 +11,7 @@ export function move(direction, maze, pacman) {
     lastDirection = direction;
     performMove(direction, maze, pacman);
   } else {
-    // Store direction as buffered if we cannot move in that direction immediately
+    // Store requested direction in buffer if it's not available immediately
     bufferedDirection = direction;
   }
 
@@ -34,21 +34,6 @@ export function move(direction, maze, pacman) {
 }
 
 function performMove(direction, maze, pacman) {
-  if (maze[pacman.y][pacman.x] === 'O') {
-    if (pacman.x === 1 && direction === 'left') {
-      pacman.x = maze[pacman.y].length - 2;
-      updatePacmanPosition(pacman);
-      return;
-    } else if (
-      pacman.x === maze[pacman.y].length - 2 &&
-      direction === 'right'
-    ) {
-      pacman.x = 1;
-      updatePacmanPosition(pacman);
-      return;
-    }
-  }
-
   const moves = {
     up: [-1, 0],
     down: [1, 0],
@@ -60,13 +45,24 @@ function performMove(direction, maze, pacman) {
   const moveRow = pacman.y + row;
   const moveCol = pacman.x + col;
 
-  // Store previous position before moving
   pacman.prevX = pacman.x;
   pacman.prevY = pacman.y;
 
-  // Update position
-  pacman.x = moveCol;
-  pacman.y = moveRow;
+  // Handle warping
+  if (direction === 'left' && moveCol < 0 && maze[pacman.y][0] === 'O') {
+    // Move to the rightmost position (excluding wall)
+    pacman.x = maze[0].length - 2;
+  } else if (
+    direction === 'right' &&
+    moveCol >= maze[0].length &&
+    maze[pacman.y][maze[0].length - 1] === 'O'
+  ) {
+    // Move to the leftmost position (excluding wall)
+    pacman.x = 1;
+  } else {
+    pacman.x = moveCol;
+    pacman.y = moveRow;
+  }
 
   // Handle pellet collection
   if (maze[pacman.y][pacman.x] === 'P' || maze[pacman.y][pacman.x] === 'X') {
@@ -102,7 +98,6 @@ function performMove(direction, maze, pacman) {
     }
   }
 
-  // Update Pacman's position in the grid
   updatePacmanPosition(pacman);
 }
 
@@ -118,7 +113,19 @@ function canMove(direction, maze, pacman) {
   const moveRow = pacman.y + row;
   const moveCol = pacman.x + col;
 
-  // Check bounds
+  // Allow warping at the edges
+  if (direction === 'left' && moveCol < 0 && maze[pacman.y][0] === 'O') {
+    return true;
+  }
+  if (
+    direction === 'right' &&
+    moveCol >= maze[0].length &&
+    maze[pacman.y][maze[0].length - 1] === 'O'
+  ) {
+    return true;
+  }
+
+  // Check bounds for non-warping moves
   if (
     moveRow < 0 ||
     moveRow >= maze.length ||
@@ -129,9 +136,6 @@ function canMove(direction, maze, pacman) {
   }
 
   const tile = maze[moveRow][moveCol];
-
-  // Allow movement through warp tiles
-  if (tile === 'O') return true;
 
   // Check for walls and other obstacles
   return !(
