@@ -132,8 +132,18 @@ body {
   background-color: orange;
 }
 
-.frightened {
+.ghost.frightened {
   background-color: blue !important;
+  animation: blink 0.5s alternate infinite;
+}
+
+@keyframes blink {
+  from {
+    background-color: blue;
+  }
+  to {
+    background-color: white;
+  }
 }
 
 .message {
