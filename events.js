@@ -141,7 +141,7 @@ function checkGhostCollisions(pacman) {
         eatingGhostSound.play();
         resetGhost(ghost);
       } else {
-        handlePacmanDeath();
+        handlePacmanDeath(pacman);
       }
     }
   });
