@@ -39,15 +39,15 @@ export class Ghost {
         newY < 0 ||
         newY >= maze.length
       ) {
-        return false; // Out of bounds
+        return false;
       }
 
       const tile = maze[newY][newX];
 
       if (this.isInPen) {
-        return tile === 'T' || tile === ' '; // Only allow gate and empty spaces
+        return tile === 'T' || tile === ' ';
       } else {
-        return tile !== 'W' && tile !== 'G'; // Avoid walls and ghost pen
+        return tile !== 'W' && tile !== 'G';
       }
     });
 
