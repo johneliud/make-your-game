@@ -7,29 +7,26 @@ let autoMoveInterval = null;
 let bufferedDirection = null;
 
 export function move(direction, maze, pacman) {
-  // Immediately try to move in the requested direction
   if (canMove(direction, maze, pacman)) {
     lastDirection = direction;
     performMove(direction, maze, pacman);
   } else {
-    // If we can't move in the new direction, store it as buffered
+    // Store direction as buffered if we cannot move in that direction immediately
     bufferedDirection = direction;
   }
 
-  // Clear any existing auto-move interval
   if (autoMoveInterval) {
     clearInterval(autoMoveInterval);
   }
 
-  // Start auto-moving Pac-Man
   autoMoveInterval = setInterval(() => {
-    // First try the buffered direction if it exists
+    // Try the buffered direction if it exists
     if (bufferedDirection && canMove(bufferedDirection, maze, pacman)) {
       lastDirection = bufferedDirection;
       performMove(bufferedDirection, maze, pacman);
       bufferedDirection = null;
     }
-    // Otherwise continue in the last valid direction
+    // Continue in the last valid direction
     else if (lastDirection && canMove(lastDirection, maze, pacman)) {
       performMove(lastDirection, maze, pacman);
     }
@@ -37,7 +34,6 @@ export function move(direction, maze, pacman) {
 }
 
 function performMove(direction, maze, pacman) {
-  // Handle warping first
   if (maze[pacman.y][pacman.x] === 'O') {
     if (pacman.x === 1 && direction === 'left') {
       pacman.x = maze[pacman.y].length - 2;
