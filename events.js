@@ -1,36 +1,39 @@
-import { GetTile } from './pacman.js';
-import { pacmanMunchSound, intermissionSound } from './sound.js';
+import { getTile } from './pacman.js';
+import {
+  pacmanMunchSound,
+  intermissionSound,
+  deathSound,
+  eatingGhostSound,
+} from './sound.js';
 import { checkWinCondition } from './win.js';
 
-let lastDirection = null; // Store the last valid direction
-let autoMoveInterval = null; // Store the interval for auto-moving
+let lastDirection = null;
+let autoMoveInterval = null;
 
-export function Move(direction, maze, pacman) {
-  // Store the last valid direction
+export function move(direction, maze, pacman) {
   lastDirection = direction;
 
-  // Clear any existing auto-move interval
   if (autoMoveInterval) {
     clearInterval(autoMoveInterval);
   }
 
-  // Start auto-moving Pac-Man in the last valid direction
   autoMoveInterval = setInterval(() => {
     if (lastDirection) {
       performMove(lastDirection, maze, pacman);
     }
-  }, 200); // Adjust the interval for smoother movement
+  }, 200);
 }
 
 function performMove(direction, maze, pacman) {
   if (maze[pacman.y][pacman.x] === 'O') {
-    if (pacman.x === 0) {
-      if (direction === 'left') {
-        pacman.x = maze[pacman.y].length - 1;
-        updatePacmanPosition(pacman);
-        return;
-      }
-    } else if (direction === 'right') {
+    if (pacman.x === 0 && direction === 'left') {
+      pacman.x = maze[pacman.y].length - 1;
+      updatePacmanPosition(pacman);
+      return;
+    } else if (
+      pacman.x === maze[pacman.y].length - 1 &&
+      direction === 'right'
+    ) {
       pacman.x = 0;
       updatePacmanPosition(pacman);
       return;
@@ -54,7 +57,6 @@ function performMove(direction, maze, pacman) {
     moveCol < 0 ||
     moveCol >= maze[0].length
   ) {
-    console.log(`Cannot move ${direction}, out of bounds.`);
     return;
   }
 
@@ -65,66 +67,81 @@ function performMove(direction, maze, pacman) {
     tile === 'G' ||
     (direction === 'down' && maze[moveRow][moveCol] === 'T')
   ) {
-    console.log(`Cannot move ${direction}, invalid tile.`);
     return;
   }
 
-  // Store previous position
   pacman.prevX = pacman.x;
   pacman.prevY = pacman.y;
-
-  // Update Pacman's position
   pacman.x = moveCol;
   pacman.y = moveRow;
 
-  // Check if Pacman is on a pellet (P)
-  if (maze[pacman.y][pacman.x] === 'P') {
-    // Play munch sound
+  if (maze[pacman.y][pacman.x] === 'P' || maze[pacman.y][pacman.x] === 'X') {
     pacmanMunchSound.play();
 
-    // Remove the pellet from the maze
     maze[pacman.y] =
       maze[pacman.y].substring(0, pacman.x) +
       ' ' +
       maze[pacman.y].substring(pacman.x + 1);
 
-    // Update the score
-    pacman.score += 10;
+    pacman.score += maze[pacman.y][pacman.x] === 'P' ? 10 : 50;
     document.getElementById('score').textContent = pacman.score;
 
-    // Remove the pellet from the DOM
-    const currentTile = GetTile(pacman.x, pacman.y);
+    const currentTile = getTile(pacman.x, pacman.y);
     if (currentTile) {
-      currentTile.classList.remove('path');
+      currentTile.classList.remove('path', 'power-pellet');
       currentTile.classList.add('empty');
     }
 
-    // Check for win condition
     if (checkWinCondition(maze)) {
       intermissionSound.play();
       document.getElementById('message').textContent = 'You Win!';
-      clearInterval(autoMoveInterval); // Stop auto-moving when the game is won
+      clearInterval(autoMoveInterval);
     }
   }
 
-  // Move Pacman in the grid
   updatePacmanPosition(pacman);
+
+  window.ghosts.forEach((ghost) => {
+    if (ghost.x === pacman.x && ghost.y === pacman.y) {
+      if (ghost.frightenedMode) {
+        eatingGhostSound.play();
+        ghost.x = 10;
+        ghost.y = 11;
+        ghost.updatePosition();
+        pacman.score += 200;
+        document.getElementById('score').textContent = pacman.score;
+      } else {
+        deathSound.play();
+        pacman.lives--;
+        document.getElementById('lives').textContent = pacman.lives;
+        if (pacman.lives === 0) {
+          document.getElementById('message').textContent = 'Game Over!';
+          clearInterval(autoMoveInterval);
+        } else {
+          pacman.x = 11;
+          pacman.y = 13;
+          window.ghosts.forEach((ghost) => {
+            ghost.x = 10;
+            ghost.y = 11;
+            ghost.updatePosition();
+          });
+        }
+      }
+    }
+  });
 }
 
 function updatePacmanPosition(pacman) {
-  // Find the previous tile Pacman was on
-  const oldTile = GetTile(pacman.prevX, pacman.prevY);
+  const oldTile = getTile(pacman.prevX, pacman.prevY);
   if (oldTile) {
-    oldTile.innerHTML = ''; // Clear previous Pacman from the old tile
+    oldTile.innerHTML = '';
   }
 
-  // Find the new tile and move Pacman there
-  const newTile = GetTile(pacman.x, pacman.y);
+  const newTile = getTile(pacman.x, pacman.y);
   if (newTile) {
     newTile.appendChild(pacman.element);
   }
 
-  // Update previous position
   pacman.prevX = pacman.x;
   pacman.prevY = pacman.y;
 }

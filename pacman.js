@@ -1,32 +1,27 @@
-import { Move } from './events.js';
-import { Maze } from './script.js';
+import { move } from './events.js';
+import { maze } from './script.js';
 
 export class Pacman {
   constructor() {
-    // Starting position near the center of the Maze
     this.x = 11;
     this.y = 13;
-    
     this.score = 0;
     this.lives = 3;
 
-    // Create pacman element
+    // Create Pac-Man element
     this.element = document.createElement('div');
     this.element.classList.add('pacman');
 
-    // Append pacman to the correct tile
-    const tile = GetTile(this.x, this.y);
+    // Append Pac-Man to the correct tile
+    const tile = getTile(this.x, this.y);
     if (tile) {
       tile.appendChild(this.element);
-      console.log('Pacman appended to tile:', tile);
-    } else {
-      console.error('Tile not found for Pacman');
     }
   }
 }
 
 // Function to get the correct tile in the grid
-export function GetTile(x, y) {
+export function getTile(x, y) {
   const grid = document.querySelector('.grid');
   if (grid && grid.children) {
     return grid.children[y * 23 + x];
@@ -39,18 +34,16 @@ const pacman = new Pacman();
 document.addEventListener('keydown', (event) => {
   switch (event.key) {
     case 'ArrowUp':
-      Move('up', Maze, pacman);
+      move('up', maze, pacman);
       break;
     case 'ArrowDown':
-      Move('down', Maze, pacman);
+      move('down', maze, pacman);
       break;
     case 'ArrowLeft':
-      Move('left', Maze, pacman);
+      move('left', maze, pacman);
       break;
     case 'ArrowRight':
-      Move('right', Maze, pacman);
+      move('right', maze, pacman);
       break;
-    default:
-      console.log('Invalid key');
   }
 });

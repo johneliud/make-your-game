@@ -1,18 +1,9 @@
-import { createGhosts } from './ghosts.js';
 import { Pacman } from './pacman.js';
+import { createGhosts } from './ghosts.js';
 
-/*
-Defines the grid layout:
-  W - Wall
-  P - Path
-  G - Ghost pen
-  T - Gate
-  0 - Tunnel
- */
-
-export const Maze = [
+export const maze = [
   'WWWWWWWWWWWWWWWWWWWWWWW',
-  'WPPPWPPPPPPPPPPPPPWPPPW',
+  'WXPPWPPPPPPPPPPPPPWPPXW',
   'WPWPWPWWWWWPWWWWWPWPWPW',
   'WPPPPPPPWPPPPPWPPPPPPPW',
   'WWWPWPWPWPWWWPWPWPWPWWW',
@@ -32,7 +23,7 @@ export const Maze = [
   'WWWPWPWPWPWWWPWPWPWPWWW',
   'WPPPPPPPWPPPPPWPPPPPPPW',
   'WPWPWPWWWWWPWWWWWPWPWPW',
-  'WPPPWPPPPPPPPPPPPPWPPPW',
+  'WXPPWPPPPPPPPPPPPPWPPXW',
   'WWWWWWWWWWWWWWWWWWWWWWW',
 ];
 
@@ -42,10 +33,11 @@ const tileClasses = {
   G: 'ghost-pen',
   T: 'gate',
   O: 'warp',
+  X: 'power-pellet',
 };
 
 const grid = document.querySelector('.grid');
-Maze.forEach((row) => {
+maze.forEach((row) => {
   row.split('').forEach((cell) => {
     const div = document.createElement('div');
     div.classList.add('tile', tileClasses[cell]);
@@ -53,27 +45,11 @@ Maze.forEach((row) => {
   });
 });
 
-function createMaze() {
-  const grid = document.querySelector('.grid');
-
-  // Clear previous grid before creating a new
-  grid.innerHTML = '';
-  Maze.forEach((row) => {
-    row.split('').forEach((cell) => {
-      const div = document.createElement('div');
-      div.classList.add('tile', tileClasses[cell]);
-      grid.appendChild(div);
-    });
-  });
-}
-
 document.addEventListener('DOMContentLoaded', () => {
-  createMaze();
   window.pacman = new Pacman();
   window.ghosts = createGhosts();
 
-  // Move ghosts at regular intervals
   setInterval(() => {
     window.ghosts.forEach((ghost) => ghost.move());
-  }, 200);
+  }, 500);
 });
