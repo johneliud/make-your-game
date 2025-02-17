@@ -1,5 +1,10 @@
 import { getTile } from './pacman.js';
-import { pacmanMunchSound, intermissionSound } from './sound.js';
+import {
+  pacmanMunchSound,
+  intermissionSound,
+  eatingGhostSound,
+  deathSound,
+} from './sound.js';
 import { checkWin } from './check_win.js';
 
 let lastDirection = null;
@@ -72,6 +77,7 @@ function performMove(direction, maze, pacman) {
       pacman.score += 10;
     } else if (maze[pacman.y][pacman.x] === 'X') {
       pacman.score += 50;
+      activatePowerMode();
     }
 
     // Remove the pellet from the maze
@@ -80,8 +86,9 @@ function performMove(direction, maze, pacman) {
       ' ' +
       maze[pacman.y].substring(pacman.x + 1);
 
-    // Update the score display
     document.getElementById('score').textContent = pacman.score;
+
+    checkGhostCollisions(pacman);
 
     // Update tile appearance
     const currentTile = getTile(pacman.x, pacman.y);
@@ -99,6 +106,77 @@ function performMove(direction, maze, pacman) {
   }
 
   updatePacmanPosition(pacman);
+  checkGhostCollisions(pacman);
+}
+
+let powerModeTimeout = null;
+const powerModeDuration = 10000;
+
+function activatePowerMode() {
+  if (powerModeTimeout) {
+    clearTimeout(powerModeTimeout);
+  }
+
+  // Set all ghosts to frightened mode
+  window.ghosts.forEach((ghost) => {
+    ghost.frightenedMode = true;
+    ghost.updateAppearance();
+  });
+
+  // Timeout to end power mode
+  powerModeTimeout = setTimeout(() => {
+    window.ghosts.forEach((ghost) => {
+      ghost.frightenedMode = false;
+      ghost.updateAppearance();
+    });
+  }, powerModeDuration);
+}
+
+function checkGhostCollisions(pacman) {
+  window.ghosts.forEach((ghost) => {
+    if (ghost.x === pacman.x && ghost.y === pacman.y) {
+      if (ghost.frightenedMode) {
+        pacman.score += 150;
+        document.getElementById('score').textContent = pacman.score;
+        eatingGhostSound.play();
+        resetGhost(ghost);
+      } else {
+        handlePacmanDeath();
+      }
+    }
+  });
+}
+
+function resetGhost(ghost) {
+  // Return ghost back to random position in ghost pen
+  ghost.x = 11 + Math.floor(Math.random() * 3);
+  ghost.y = 11;
+  ghost.isInPen = true;
+  ghost.frightenedMode = false;
+  ghost.updateAppearance();
+  ghost.updatePosition();
+}
+
+function handlePacmanDeath(pacman) {
+  deathSound.play();
+  pacman.lives--;
+  document.getElementById('lives').textContent = pacman.lives;
+
+  if (pacman.lives < 1) {
+    document.getElementById('message').textContent = 'Game Over!';
+    clearInterval(autoMoveInterval);
+    return;
+  }
+
+  pacman.x = 11;
+  pacman.y = 13;
+  updatePacmanPosition(pacman);
+
+  window.ghosts.forEach(resetGhost);
+
+  if (powerModeTimeout) {
+    clearTimeout(powerModeTimeout);
+  }
 }
 
 function canMove(direction, maze, pacman) {
