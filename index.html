@@ -4,17 +4,17 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="styles.css" />
-    <title>Pac-Man</title>
+    <title>Pac-Man Game</title>
   </head>
   <body>
-    <div class="score">Score: <span id="score">0</span></div>
+    <div class="game-info">
+      <div class="score">Score: <span id="score">0</span></div>
+      <div class="lives">Lives: <span id="lives">3</span></div>
+    </div>
+
     <div class="grid"></div>
     <div class="message" id="message"></div>
 
     <script type="module" src="script.js"></script>
-    <script type="module" src="pacman.js"></script>
-    <script type="module" src="events.js"></script>
-    <script type="module" src="win.js"></script>
-    <script type="module" src="sound.js"></script>
   </body>
 </html>

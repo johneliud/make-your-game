@@ -19,89 +19,47 @@
 }
 
 body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background-color: var(--path-color);
-  margin: 0;
-}
-
-.score {
+  width: 100%;
+  background-color: black;
   color: white;
-  font-size: 30px;
-  position: absolute;
-  top: 30px;
-  right: 20px;
-  transform: translateX(-50%);
+  text-align: center;
+  margin: 0;
+  padding: 0;
 }
 
-.message {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 30px;
-  color: yellow;
-  display: none;
+.game-info {
+  width: 80%;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
-.pacman {
-  width: 15px;
-  height: 15px;
-  background-color: yellow;
-  border-radius: 50%;
-  position: absolute;
-  z-index: 10;
-}
-
-.ghost {
-  width: 15px;
-  height: 15px;
-  border-radius: 50% 50% 0 0;
-  position: absolute;
-  z-index: 10;
-}
-
-.ghost.red {
-  background-color: red;
-}
-
-.ghost.pink {
-  background-color: pink;
-}
-
-.ghost.cyan {
-  background-color: cyan;
-}
-
-.ghost.orange {
-  background-color: orange;
-}
-
-.frightened {
-  background: blue !important;
+.score,
+.lives {
+  font-size: 24px;
+  margin: 10px;
 }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(23, var(--tile-size));
-  grid-template-rows: repeat(23, var(--tile-size));
-  gap: 2px;
-  background-color: var(--path-color);
+  grid-template-columns: repeat(23, 20px);
+  grid-template-rows: repeat(23, 20px);
+  gap: 1px;
+  justify-content: center;
+  margin: 20px auto;
 }
 
 .tile {
-  width: var(--tile-size);
-  height: var(--tile-size);
+  width: 20px;
+  height: 20px;
+  background-color: black;
 }
 
-/* Walls */
 .wall {
-  background-color: var(--wall-color);
+  background-color: blue;
 }
 
-/* Paths with dots */
 .path {
   background-color: var(--path-color);
   position: relative;
@@ -119,21 +77,74 @@ body {
   transform: translate(-50%, -50%);
 }
 
-/* Ghost pen area */
+.power-pellet {
+  background-color: var(--path-color);
+}
+
+.power-pellet::after {
+  content: '';
+  display: block;
+  width: 10px;
+  height: 10px;
+  background-color: var(--dot-color);
+  border-radius: 50%;
+  margin: 5px auto;
+}
+
+.empty {
+  background-color: black;
+}
+
+@keyframes eat {
+}
+
+.pacman {
+  width: 20px;
+  height: 20px;
+  background-color: yellow;
+  border-radius: 50%;
+  position: absolute;
+  z-index: 10;
+  animation: eat 0.3s infinite linear;
+}
+
+.ghost {
+  width: 20px;
+  height: 20px;
+  border-radius: 50% 50% 0 0;
+  position: relative;
+  z-index: 5;
+}
+
+.red {
+  background-color: red;
+}
+
+.pink {
+  background-color: pink;
+}
+
+.cyan {
+  background-color: cyan;
+}
+
+.orange {
+  background-color: orange;
+}
+
+.frightened {
+  background-color: blue !important;
+}
+
+.message {
+  font-size: 32px;
+  margin-top: 20px;
+}
+
 .ghost-pen {
   background-color: var(--ghost-pen-color);
 }
 
-/* Ghost pen gate */
 .gate {
   background-color: var(--gate-color);
-}
-
-/* Warp tunnels */
-.warp {
-  background-color: var(--warp-color);
-}
-
-.empty {
-  background-color: var(--path-color);
 }
