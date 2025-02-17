@@ -8,19 +8,38 @@ export class Pacman {
     this.score = 0;
     this.lives = 3;
 
-    // Create Pac-Man element
     this.element = document.createElement('div');
     this.element.classList.add('pacman');
 
-    // Append Pac-Man to the correct tile
     const tile = getTile(this.x, this.y);
     if (tile) {
       tile.appendChild(this.element);
     }
+
+    this.initializeControls();
+  }
+
+  initializeControls() {
+    document.addEventListener('keydown', (event) => {
+      switch (event.key) {
+        case 'ArrowUp':
+          move('up', maze, this);
+          break;
+        case 'ArrowDown':
+          move('down', maze, this);
+          break;
+        case 'ArrowLeft':
+          move('left', maze, this);
+          break;
+        case 'ArrowRight':
+          move('right', maze, this);
+          break;
+      }
+    });
   }
 }
 
-// Function to get the correct tile in the grid
+// Get correct tile in the grid
 export function getTile(x, y) {
   const grid = document.querySelector('.grid');
   if (grid && grid.children) {
@@ -28,22 +47,3 @@ export function getTile(x, y) {
   }
   return null;
 }
-
-const pacman = new Pacman();
-
-document.addEventListener('keydown', (event) => {
-  switch (event.key) {
-    case 'ArrowUp':
-      move('up', maze, pacman);
-      break;
-    case 'ArrowDown':
-      move('down', maze, pacman);
-      break;
-    case 'ArrowLeft':
-      move('left', maze, pacman);
-      break;
-    case 'ArrowRight':
-      move('right', maze, pacman);
-      break;
-  }
-});
