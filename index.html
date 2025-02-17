@@ -7,13 +7,25 @@
     <title>Pac-Man Game</title>
   </head>
   <body>
-    <div class="game-info">
-      <div class="score">Score: <span id="score">0</span></div>
-      <div class="lives">Lives: <span id="lives">3</span></div>
-    </div>
+    <div class="game-container">
+      <div class="game-info">
+        <div style="font-family: League Spartan;" class="timer" id="timer">00:00</div>
+        <div class="score">Score: <span id="score">0</span></div>
+        <div class="lives">Lives: <span id="lives">3</span></div>
+        <!-- <div class="fps" id="fps"></div> -->
+      </div>
 
-    <div class="grid"></div>
-    <div class="message" id="message"></div>
+      <div class="grid"></div>
+      <div class="message" id="message"></div>
+
+      <div class="pause-menu" id="pauseMenu">
+        <div class="pause-content">
+          <h2>Game Paused</h2>
+          <button id="continueBtn">Continue</button>
+          <button id="restartBtn">Restart</button>
+        </div>
+      </div>
+    </div>
 
     <script type="module" src="script.js"></script>
   </body>
