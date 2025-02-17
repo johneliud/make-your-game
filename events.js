@@ -7,38 +7,47 @@ let autoMoveInterval = null;
 let bufferedDirection = null;
 
 export function move(direction, maze, pacman) {
-  bufferedDirection = direction;
+  // Immediately try to move in the requested direction
+  if (canMove(direction, maze, pacman)) {
+    lastDirection = direction;
+    performMove(direction, maze, pacman);
+  } else {
+    // If we can't move in the new direction, store it as buffered
+    bufferedDirection = direction;
+  }
 
   // Clear any existing auto-move interval
   if (autoMoveInterval) {
     clearInterval(autoMoveInterval);
   }
 
-  // Start auto-moving Pac-Man in the last valid direction
+  // Start auto-moving Pac-Man
   autoMoveInterval = setInterval(() => {
-    if (lastDirection) {
+    // First try the buffered direction if it exists
+    if (bufferedDirection && canMove(bufferedDirection, maze, pacman)) {
+      lastDirection = bufferedDirection;
+      performMove(bufferedDirection, maze, pacman);
+      bufferedDirection = null;
+    }
+    // Otherwise continue in the last valid direction
+    else if (lastDirection && canMove(lastDirection, maze, pacman)) {
       performMove(lastDirection, maze, pacman);
     }
   }, 200);
 }
 
 function performMove(direction, maze, pacman) {
-  // Check if the buffered direction is valid
-  if (bufferedDirection && canMove(bufferedDirection, maze, pacman)) {
-    direction = bufferedDirection;
-    lastDirection = direction;
-    bufferedDirection = null;
-  }
-
-  if (maze[pacman.y][pacman.x] === 'X') {
-    if (pacman.x === 0) {
-      if (direction === 'left') {
-        pacman.x = maze[pacman.y].length - 1;
-        updatePacmanPosition(pacman);
-        return;
-      }
-    } else if (direction === 'right') {
-      pacman.x = 0;
+  // Handle warping first
+  if (maze[pacman.y][pacman.x] === 'O') {
+    if (pacman.x === 1 && direction === 'left') {
+      pacman.x = maze[pacman.y].length - 2;
+      updatePacmanPosition(pacman);
+      return;
+    } else if (
+      pacman.x === maze[pacman.y].length - 2 &&
+      direction === 'right'
+    ) {
+      pacman.x = 1;
       updatePacmanPosition(pacman);
       return;
     }
@@ -55,38 +64,18 @@ function performMove(direction, maze, pacman) {
   const moveRow = pacman.y + row;
   const moveCol = pacman.x + col;
 
-  if (
-    moveRow < 0 ||
-    moveRow >= maze.length ||
-    moveCol < 0 ||
-    moveCol >= maze[0].length
-  ) {
-    console.log(`Cannot move ${direction}, out of bounds.`);
-    return;
-  }
-
-  const tile = maze[moveRow][moveCol];
-
-  if (
-    tile === 'W' ||
-    tile === 'G' ||
-    (direction === 'down' && maze[moveRow][moveCol] === 'T')
-  ) {
-    console.log(`Cannot move ${direction}, invalid tile.`);
-    return;
-  }
-
+  // Store previous position before moving
   pacman.prevX = pacman.x;
   pacman.prevY = pacman.y;
 
+  // Update position
   pacman.x = moveCol;
   pacman.y = moveRow;
 
-  // Check if Pacman is on a pellet (P) or power pellet (X)
+  // Handle pellet collection
   if (maze[pacman.y][pacman.x] === 'P' || maze[pacman.y][pacman.x] === 'X') {
     pacmanMunchSound.play();
 
-    // Update the score based on the type of pellet
     if (maze[pacman.y][pacman.x] === 'P') {
       pacman.score += 10;
     } else if (maze[pacman.y][pacman.x] === 'X') {
@@ -102,7 +91,7 @@ function performMove(direction, maze, pacman) {
     // Update the score display
     document.getElementById('score').textContent = pacman.score;
 
-    // Remove the pellet from the DOM
+    // Update tile appearance
     const currentTile = getTile(pacman.x, pacman.y);
     if (currentTile) {
       currentTile.classList.remove('path', 'power-pellet');
@@ -117,7 +106,7 @@ function performMove(direction, maze, pacman) {
     }
   }
 
-  // Move Pacman in the grid
+  // Update Pacman's position in the grid
   updatePacmanPosition(pacman);
 }
 
@@ -133,6 +122,7 @@ function canMove(direction, maze, pacman) {
   const moveRow = pacman.y + row;
   const moveCol = pacman.x + col;
 
+  // Check bounds
   if (
     moveRow < 0 ||
     moveRow >= maze.length ||
@@ -144,6 +134,10 @@ function canMove(direction, maze, pacman) {
 
   const tile = maze[moveRow][moveCol];
 
+  // Allow movement through warp tiles
+  if (tile === 'O') return true;
+
+  // Check for walls and other obstacles
   return !(
     tile === 'W' ||
     tile === 'G' ||
@@ -152,19 +146,13 @@ function canMove(direction, maze, pacman) {
 }
 
 function updatePacmanPosition(pacman) {
-  // Find the previous tile Pacman was on
   const oldTile = getTile(pacman.prevX, pacman.prevY);
   if (oldTile) {
-    oldTile.innerHTML = ''; // Clear previous Pacman from the old tile
+    oldTile.innerHTML = '';
   }
 
-  // Find the new tile and move Pacman there
   const newTile = getTile(pacman.x, pacman.y);
   if (newTile) {
     newTile.appendChild(pacman.element);
   }
-
-  // Update previous position
-  pacman.prevX = pacman.x;
-  pacman.prevY = pacman.y;
 }
